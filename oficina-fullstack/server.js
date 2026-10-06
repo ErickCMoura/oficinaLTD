@@ -7,10 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-const tarefas =[ 
-    {id: 1, titulo: "Aprender Backend"},
-    {id: 2, titulo: "Aprender Frontend"}
-];
+const tarefas =[];
 
 app.get("/api/tarefas", (req, res) =>{
     res.json(tarefas);
@@ -36,6 +33,29 @@ app.post("/api/tarefas", (req, res) => {
 
     tarefas.push(novaTarefa);
     res.status(201).json(novaTarefa);
+});
+
+app.delete("/api/tarefas/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = tarefas.findIndex(tarefa => tarefa.id === id);
+    
+    if (index === -1) {
+        return res.status(404).json({
+            erro: "Tarefa não encontrada."
+        });
+    }
+
+    tarefas.splice(index, 1);
+    res.status(200).json({
+        mensagem: "Tarefa removida com sucesso."
+    });
+});
+
+app.delete("/api/tarefas", (req, res) => {
+    tarefas.length = 0;
+    res.status(200).json({
+        mensagem: "Todas as tarefas foram removidas com sucesso."
+    });
 });
 
 app.listen(PORT, () => {
